@@ -1,6 +1,6 @@
 /*Start main  rules*/
 body{
-  background-color: #00ffff;
+  background-color: #e6ffff;
 }
 /*END main rules*/
 /*Start login form*/
@@ -13,5 +13,8 @@ body{
 }
 .login .form-control{
 background-color:#0040ff;
+}
+.login .btn{
+background-color:#00bfff;
 }
 /*End login form*/
