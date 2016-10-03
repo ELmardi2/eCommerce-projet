@@ -1,8 +1,10 @@
 <?php
-session_start();
+ session_start();
+ $nonavbar = '';
 if (isset($_SESSION['username'])) {
-      header('location: home.php');//redirect to page page
+    header('location: home.php');  //:redirect to home page
 }
+
 include 'init.php';
 include $tpl. "header.php";
 include 'include/languages/en.php';
@@ -10,23 +12,26 @@ include 'include/languages/en.php';
 //for control login allow only post method
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $username = $_POST['user'];
-  $password = $_POST['pass'];
-  $hashedpass = sha1($password);//check if the password hashed
-  //echo $username . '...' . $password . $hashedpass;
-
-  //check if user exist
+    $password = $_POST['pass'];
+    $hashedpass = sha1($password);
+   //echo $username . '  ' . $password;
+  //echo $hashedpass;
   $stmt = $con->prepare("SELECT username, password FROM users WHERE username = ? AND password = ? AND GroupID = 1");
   $stmt->execute(array($username, $hashedpass));
   $count = $stmt->rowCount();
-  //check count if > 0 mean the user is admin or have an special resourcebundle_get_error_code
+  //echo $count;
+  //check count if > 0  that mean the user is admin or have an special record in the data base
   if ($count > 0) {
-      $_SESSION['username'] = $username;//register session name
-      header('location: home.php');//redirect to page page
-      exit();
-  //echo "Bienvenue" . '...' . $username;
-  }
-}
+    $_SESSION['username'] = $username; //register session name
+    header('location:home.php');  //:redirect to home page
+     exit();
+    //echo "Bienvenue" . $username;
+    //$_SESSION['user'] =  $username;
 
+
+  }
+
+}
  ?>
 
 
@@ -39,3 +44,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  <?php
  include $tpl . "footer.php";
   ?>
+  <?php
+  session_start();
+
+  if(isset($_SESSION['username'])){
+
+    echo "Bienvenue" . $_SESSION['username'];
+
+  }else {
+  //  echo "You are not authorised to view this page directly";
+
+      header('location: index.php');  //:redirect to index  page
+
+      exit();
+  }
+   ?>
