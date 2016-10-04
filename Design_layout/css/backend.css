@@ -18,7 +18,6 @@ background-color:#0040ff;
 background-color:#00bfff;
 }
 /*End login form*/
-
 /*Start Bootstrap Edits*/
 .navbar{
   border-radius: 0;
@@ -49,3 +48,11 @@ border-radius: 0;
   padding: 10px 15px;
 }
 /*End Bootstrap Edits*/
+/* start members page*/
+  h1{
+    font-size: 55px;
+    margin: 40px 0;
+    font-weight: bold;
+    color: #c0e;
+  }
+/* end members page*/
