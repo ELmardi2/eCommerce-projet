@@ -21,12 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   //echo $username . '...' . $password . $hashedpass;
 
   //check if user exist
-  $stmt = $con->prepare("SELECT username, password FROM users WHERE username = ? AND password = ? AND GroupID = 1");
+  $stmt = $con->prepare("SELECT  userID, username, password FROM users WHERE username = ? AND password = ? AND GroupID = 1 LIMIT 1");
   $stmt->execute(array($username, $hashedpass));
+  $row = $stmt->fetch();
   $count = $stmt->rowCount();
   //check count if > 0 mean the user is admin or have an special resourcebundle_get_error_code
   if ($count > 0) {
     $_SESSION['username'] = $username; //register session name
+      $_SESSION['ID'] = $row['userID']; //register session ID
     header('location: home.php');//redirect to home page
     exit();
   }

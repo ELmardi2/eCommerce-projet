@@ -22,7 +22,7 @@
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Elmardi <span class="caret"></span></a>
           <ul class="dropdown-menu">
-            <li><a href="#">Edit profil</a></li>
+            <li><a href="members.php?do=Edit&userID=<?php echo $_SESSION['ID']?>">Edit profil</a></li>
             <li><a href="#">Setting</a></li>
             <li><a href="logout.php">Logout</a></li>
           </ul>
