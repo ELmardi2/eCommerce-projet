@@ -1,9 +1,19 @@
 <?php
-session_start();
+  session_start();
+  //$nonavbar = '';
+  //print_r($_SESSION);
 if (isset($_SESSION['username'])) {
-  echo "welcome" . $_SESSION['username'];
-    //  header('location: home.php');//redirect to page page
+
+  //echo "Bienvenue" . '...!!' . $_SESSION['username'];
+
+  include ('init.php');
+
+echo "Bienvenue";
+
+   include $tpl . "footer.php";
 }else {
+
   header('location: index.php');
+
   exit();
 }

@@ -1,11 +1,14 @@
 <?php
 session_start();
+$nonavbar = '';
 if (isset($_SESSION['username'])) {
-      header('location: home.php');//redirect to page page
+      //header('location: home.php');//redirect to home page
+        header('location: home.php');
 }
 include 'init.php';
-include $tpl. "header.php";
-include 'include/languages/en.php';
+
+
+
 
 //for control login allow only post method
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -20,10 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $count = $stmt->rowCount();
   //check count if > 0 mean the user is admin or have an special resourcebundle_get_error_code
   if ($count > 0) {
-      $_SESSION['username'] = $username;//register session name
-      header('location: home.php');//redirect to page page
-      exit();
-  //echo "Bienvenue" . '...' . $username;
+    $_SESSION['username'] = $username; //register session name
+    header('location: home.php');//redirect to home page
+    exit();
   }
 }
 
