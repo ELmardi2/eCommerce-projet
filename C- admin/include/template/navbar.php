@@ -24,7 +24,7 @@
           <ul class="dropdown-menu">
             <li><a href="#">Edit profil</a></li>
             <li><a href="#">Setting</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="logout.php">Logout</a></li>
           </ul>
         </li>
       </ul>
