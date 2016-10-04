@@ -1,10 +1,13 @@
 <?php
 session_start();
 $nonavbar = '';
+$pageTitle = 'login';
 if (isset($_SESSION['username'])) {
       //header('location: home.php');//redirect to home page
         header('location: home.php');
 }
+
+
 include 'init.php';
 
 

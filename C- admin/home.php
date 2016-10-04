@@ -4,6 +4,8 @@
   //print_r($_SESSION);
 if (isset($_SESSION['username'])) {
 
+  //$pageTitle = 'Home';
+
   //echo "Bienvenue" . '...!!' . $_SESSION['username'];
 
   include ('init.php');
