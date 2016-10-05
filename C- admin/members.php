@@ -16,7 +16,23 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
   if ($do == 'Manage') {//Manage page (gere page)
 
 
-  }elseif ($do == 'Edit') {  //Edit page (modéfie page)?>
+  }elseif ($do == 'Edit') {  //Edit page (modéfie page)
+
+    /*if(isset($_GET['userID']) && is_numeric($_GET['userID'])) {echo intval($_GET['userID']);}else {  echo 0;}*/
+    $userID = isset($_GET['userID']) && is_numeric($_GET['userID']) ? intval($_GET['userID']) : 0;
+    //check if user exist
+    $stmt = $con->prepare("SELECT * FROM users WHERE userID = ? LIMIT 1");
+    $stmt->execute(array($userID));
+    $row = $stmt->fetch();
+    $count = $stmt->rowCount();
+    if ($stmt->rowCount() > 0) {
+      echo "Super this the form whitch i can Edit";
+    }else {
+      echo "Oops there is no such ID with this name";
+    }
+}
+
+    ?>
 
 <h1 class="text-center"> Edit Members</h1>
 
@@ -64,7 +80,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
   </form>
 </div>
 
-  <?php }
+  <?php
    include $tpl . "footer.php";
 }else {
 
