@@ -7,11 +7,7 @@ if (isset($_SESSION['username'])) {
         header('location: home.php');
 }
 
-
 include 'init.php';
-
-
-
 
 //for control login allow only post method
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
