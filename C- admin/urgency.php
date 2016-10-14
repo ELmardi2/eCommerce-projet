@@ -88,9 +88,11 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
 
   <?php
 
-
-}else {// else show error message
+  // else show error message
+}else {
   echo "Oops there is no such ID with this name";
+}elseif ($do == 'Update') {
+  # code...
 }
 }
 
