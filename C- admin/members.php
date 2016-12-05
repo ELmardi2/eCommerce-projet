@@ -12,6 +12,7 @@ if (isset($_SESSION['username'])) {
   include ('init.php');
 
 $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
+
   //Start Manage page(commence guestion page)
   if ($do == 'Manage') {//Manage page (gere page)
 
@@ -43,12 +44,13 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
               <h1 class="text-center"> Edit Members</h1>
 
               <div class="container">
-                <form class="form-horizontal">
+                <form class="form-horizontal" action="?do=Update" method="POST">
+                  <input type="hidden" name="userID" value="<?php echo $userID ?>">
                   <!--Start username field-->
                   <div class="form-group form-group-lg">
                     <label class="col-sm-2 control-lebel">username</label>
                     <div class="col-sm-10 col-md-4">
-                      <input type="text" name="username" value="<?php echo $row['username']; ?>" class="form-control" autocomplete="off">
+                      <input type="text" name="username" value="<?php echo $row['username']; ?>" class="form-control" autocomplete="off" required="required">
                     </div>
                   </div>
                   <!--End username field-->
@@ -56,7 +58,8 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
                   <div class="form-group form-group-lg">
                     <label class="col-sm-2 control-lebel">password</label>
                     <div class="col-sm-10 col-md-4">
-                      <input type="password" name="password" class="form-control" autocomplete="new-password">
+                      <input type="hidden" name="oldpassword" value="<?php echo $row['password']; ?>" >
+                        <input type="password" name="newpassword" class="form-control" autocomplete="new-password" required="required">
                     </div>
                   </div>
                   <!--End password field-->
@@ -64,7 +67,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
                   <div class="form-group form-group-lg">
                     <label class="col-sm-2 control-lebel">E-mail</label>
                     <div class="col-sm-10 col-md-4">
-                      <input type="email" name="Email"  value="<?php echo $row['Email']; ?>" class="form-control">
+                      <input type="email" name="Email"  value="<?php echo $row['Email']; ?>" class="form-control" required="required">
                     </div>
                   </div>
                   <!--End e-mail field-->
@@ -72,7 +75,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
                   <div class="form-group form-group-lg">
                     <label class="col-sm-2 control-lebel">full name</label>
                     <div class="col-sm-10 col-md-4">
-                      <input type="text" name="full"  value="<?php echo $row['fullname']; ?>" class="form-control">
+                      <input type="text" name="fullname"  value="<?php echo $row['fullname']; ?>" class="form-control">
                     </div>
                   </div>
                   <!--End fullname field-->
@@ -88,10 +91,54 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
 
   <?php
 
-
-}else {// else show error message
+  // else show error message
+}else {
   echo "Oops there is no such ID with this name";
 }
+}elseif ($do == 'Update') {
+  echo "<h1 class='text-center'> Update Members</h1>";
+  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    //Get variables from form
+    $id   = $_POST['userID'];
+    $user = $_POST['username'];
+    $email = $_POST['Email'];
+    $name = $_POST['fullname'];
+
+    //password trich
+    $pass =  empty($_POST['newpassword']) ?  $_POST['oldpassword'] : sha1($_POST['newpassword']);
+
+    //check form before
+    $formerrors = array();
+    if (strlen($user) < 4) {
+      $formerrors[] = "<div class='alert alert-danger'> user can't be less than <strong>4</strong>charecters</div>";
+    }
+    if (empty($user)) {
+      $formerrors[] ="<div class='alert alert-danger'> user request <strong>obigation</strong> </div>";
+    }
+    if (empty($email)) {
+      $formerrors[] = " <div class='alert alert-danger'> Email <strong>obigation</strong> </div>";
+    }
+    if (empty($name)) {
+      $formerrors[] = " <div class='alert alert-danger'> Name is requested </div>";
+    }
+    foreach ($formerrors as $error) {
+      echo $error;
+    }
+    //chech if there is no errors proced the data base
+    if (empty($error)) {
+      //Update the data base with these formation
+      $stmt = $conn->prepare("UPDATE users SET username = ?, Email = ?, fullname = ? WHERE userID = ?, pass = ?");
+      $stmt->execute(array($user, $email, $name, $id, $pass));
+
+      //echo success message
+      echo "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Updated</div>';
+
+    }
+
+  }else {
+    echo "sorry you cannot browse this page";
+  }
 }
 
    include $tpl . "footer.php";
