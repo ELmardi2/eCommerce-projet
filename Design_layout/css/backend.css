@@ -68,4 +68,13 @@ border-radius: 0;
     font-weight: bold;
     color: #c0e;
   }
+  .show-pass{
+    position: absolute;
+    top: 7px;
+    right: -30px;
+  }
+  .main-table tr:first-child td{
+    background-color: #333;
+    color: #FFF;
+  }
 /* end members page*/
