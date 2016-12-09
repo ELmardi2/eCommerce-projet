@@ -6,8 +6,7 @@ if (isset($_SESSION['username'])) {
   //$pageTitle = 'Home';
 
   include ('init.php');
-
-print_r($_SESSION);
+echo "Welcome(Bienvenue)";
 
    include $tpl . "footer.php";
 }else {

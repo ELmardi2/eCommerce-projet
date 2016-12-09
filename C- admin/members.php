@@ -14,8 +14,16 @@ if (isset($_SESSION['username'])) {
 $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
 
   //Start Manage page(commence guestion page)
-  if ($do == 'Manage') {//Manage page (gestion page)  ?>
-      <h1 class="text-center"> Add new Member</h1>
+  if ($do == 'Manage') {//Manage page (gestion page)
+
+    //select users except Admins
+    $stmt = $con ->prepare("SELECT * FROM users WHERE GroupID != 1");
+    //execute the stmt
+    $stmt->execute();
+    //asign all data in variables
+    $rows = $stmt->fetchAll();
+    ?>
+      <h1 class="text-center"> Manage Members</h1>
       <div class="container">
         <div class="table-responsive">
           <table class="main-table text-center table table-bordered">
@@ -27,83 +35,20 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
               <td>Registred Date</td>
               <td>Control</td>
             </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <a href="#" class="btn btn-success">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <a href="#" class="btn btn-success">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <a href="#" class="btn btn-success">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <a href="#" class="btn btn-success">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <a href="#" class="btn btn-success">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <a href="#" class="btn btn-success">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
-                <a href="#" class="btn btn-success">Edit</a>
-                <a href="#" class="btn btn-danger">Delete</a>
-              </td>
-            </tr>
+          <?php foreach ($rows as $row){
+            echo "<tr>";
+            echo "<td>" . $row['userID'] . "</td>";
+            echo "<td>" . $row['username'] . "</td>";
+            echo "<td>" . $row['Email'] . "</td>";
+            echo "<td>" . $row['fullname'] . "</td>";
+            echo "<td>" . $row['Date'] . "</td>";
+            echo "<td>
+            <a href='members.php?do=Edit&userID=" . $row[userID] . "'  class='btn btn-success'><i class='fa fa-edit'></i>Edit</a>
+            <a href='members.php?do=Delete&userID=" . $row[userID] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>
+            </td>";
+            echo "</tr>";
+          }
+             ?>
           </table>
         </div>
         <a href='members.php?do=Add' class="btn btn-primary"><i class="fa fa-plus"></i>Add new Member</a>
@@ -159,7 +104,6 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
 <?php
 }elseif ($do == 'insert') {
 
-
   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
   echo "<h1 class='text-center'> Update Members</h1>";
@@ -192,11 +136,15 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
       echo "<div class='alert alert-danger'>" . $error . "</div>";
     }
     //chech if there is no errors proced the data base
-    if (empty($error)) {
-      //Insert thes info to data base
-      $stmt = $con->prepare("INSERT INTO users(
-        username, password, Email, fullname)
-        VALUES(:zuser, :zpass, :zmail, :zname)");
+    if (empty($error)) {    //Insert thes info to data base
+      //check if user exist in the data base
+      $check = checkItem('username', 'users', $user);
+      if ($check == 1) {
+        echo "<div class='alert alert-danger'>Sorry this user  is already exist</div>";
+      }else {
+
+      $stmt = $con->prepare("INSERT INTO users(username, password, Email, fullname,Date)
+VALUES(:zuser, :zpass, :zmail, :zname, now())");
         $stmt->execute(array(
           'zuser'  =>$user,
           'zpass'  =>$hashpass,
@@ -204,12 +152,19 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
           'zname'  =>$name
         ));
       //echo success message
-      echo "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Inserted</div>';
-
+      echo "<div class='container'>";
+      $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . " record Inserted</div>";
+          RedirectHome($theMsg, 'back');
+          echo "</div>";
+  }
     }
 
+
   }else {
-    echo "sorry you cannot browse this page";
+    echo "<div class='container'>";
+  $theMsg = "<div class='alert alert-danger'>sorry you cannot browse this page directly</div>";
+  RedirectHome($theMsg, 'back', 7);
+  echo "</div>";
   }
 }elseif ($do == 'Edit') {  //Edit page (modéfie page)
 //: check if  userID is numeric and get his integer value:::::::
@@ -229,6 +184,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
 
     //check changes in row count
     $count = $stmt->rowCount();
+
 
     //check if there is such ID show the form
     if ($stmt->rowCount() > 0) { ?>
@@ -281,13 +237,19 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
               </div>
 
   <?php
-
-  // else show error message
 }else {
-  echo "Oops there is no such ID with this name";
+  // else show error message
+
+  echo "<div class='container'>";
+  $theMsg = "<div class='alert alert-danger'>Oops there is no such ID with this name</div>";
+      RedirectHome($theMsg);
+      echo "</div>";
 }
 }elseif ($do == 'Update') {
+
+  //Update page
   echo "<h1 class='text-center'> Update Members</h1>";
+  echo "<div class='container'>";
   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     //Get variables from form
@@ -305,7 +267,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
       $formerrors[] = " user can't be less than <strong>4</strong>charecters";
     }
     if (empty($user)) {
-      $formerrors[] ="user request <strong>obigation</strong> ";
+      $formerrors[] = "user request <strong>obigation</strong> ";
     }
     if (empty($pass)) {
       $formerrors[] ="Password request <strong>obigation</strong> ";
@@ -314,7 +276,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
       $formerrors[] = " Email <strong>obigation</strong> ";
     }
     if (empty($name)) {
-      $formerrors[] = " Name is requested </div>";
+      $formerrors[] = " Name is requested ";
     }
     foreach ($formerrors as $error) {
       echo  " <div class='alert alert-danger'>" . $error . "</div>";
@@ -322,18 +284,55 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
     //chech if there is no errors proced the data base
     if (empty($error)) {
       //Update the data base with these formation
-      $stmt = $conn->prepare("UPDATE users SET username = ?, Email = ?, fullname = ? WHERE userID = ?, pass = ?");
-      $stmt->execute(array($user, $email, $name, $id, $pass));
+      $stmt = $con->prepare("UPDATE users SET username = ?, Email = ?, fullname = ? WHERE userID = ?, pass = ?");
+      $stmt->execute(array($user, $email, $name, $pass, $id));
+        $stmt->rowCount();
 
       //echo success message
-      echo "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Updated</div>';
-
+    $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Updated</div>';
+        RedirectHome($theMsg, 'back');
     }
 
   }else {
-    echo "sorry you cannot browse this page";
+    $theMsg = "<div class='alert alert-danger'>sorry you cannot browse this page directly</div>";
+      RedirectHome($theMsg);
   }
-}
+  echo "</div>";
+}elseif ($do == 'Delete') {
+  //Delete page
+echo  '<h1 class="text-center"> Delete Members</h1>';
+echo  '<div class="container">';
+          //echo "Welcome to Delete page";
+
+          $userID = isset($_GET['userID']) && is_numeric($_GET['userID']) ? intval($_GET['userID']) : 0;
+
+
+          //SELECT user depend on userID
+          //check if user exist
+          $stmt = $con->prepare("SELECT * FROM users WHERE userID = ? LIMIT 1");
+
+          //execute query
+          $stmt->execute(array($userID));
+
+          //check changes in row count
+          $count = $stmt->rowCount();
+
+          //check if there is such ID show the form
+          if ($stmt->rowCount() > 0) {
+
+          $stmt = $con->prepare("DELETE FROM users WHERE userID = :zuser");
+
+          $stmt->bindParam(':zuser', $userID);
+
+          $stmt->execute();
+          $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Deleted</div>';
+          RedirectHome($theMsg);
+          }else {
+            $theMsg =  "<div class='alert alert-danger'> Non! cet ID n'est pas exist</div>";
+                RedirectHome($theMsg);
+          }
+          }
+          echo "</div>";
 
    include $tpl . "footer.php";
 }else {

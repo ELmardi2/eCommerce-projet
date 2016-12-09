@@ -22,4 +22,8 @@ $(function() {
   }, function(){
     passFeild.attr('type', 'password');
   });
+  //confirmation Delete
+  $('.confirm').click(function () {
+    return confirm('Are You sure!?'); 
+  });
 });
