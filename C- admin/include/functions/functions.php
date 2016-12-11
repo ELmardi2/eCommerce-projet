@@ -53,4 +53,36 @@
         $count = $stmtA->rowCount();
         return $count;
       }
+
+      /*
+      //function count Items V 1.0
+      **function count Items V1
+      ** $item = item to count .
+      ** $table = table to choose from
+      */
+      function countItem($item, $table)
+      {
+        global $con;
+        $stmtB = $con->prepare("SELECT COUNT($item) FROM $table");
+        $stmtB->execute();
+        return $stmtB->fetchColumn();
+      }
+
+      /*
+      //function latest V 1.0
+      **function select the latest[users ,items,comments....;etc]
+      ** $select = feild to select .
+      **$table from where we choose
+      **$LIMIT number of Items or the values
+      */
+      function getLatest($select, $table, $order, $limit = 5)
+      {
+        global $con;
+        $stmtC = $con->prepare("SELECT $select FROM $table ORDER BY $order DESC  LIMIT $limit");
+        $stmtC->execute();
+        $row = $stmtC->fetchAll();
+        return $row;
+      }
+
+
  ?>

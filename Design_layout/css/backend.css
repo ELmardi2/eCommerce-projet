@@ -60,6 +60,57 @@ border-radius: 0;
 .form-group{
   position: relative;
 }
+/*start Home page*/
+.home-stats .stat{
+border-radius: 12px;
+  border: 2px solid #CCC;
+  padding: 20px;
+  font-size: 15px;
+  color: #FFF;
+}
+.home-stats .stat a{
+  color: #FFF;
+}
+.home-stats .stat a:hover{
+  text-decoration: none;
+}
+.home-stats .st-members{
+  background-color: #3333cc;
+}
+.home-stats .st-pending{
+  background-color: #00cc00;
+}
+  .home-stats .st-items{
+    background-color: #e6e600;
+  }
+      .home-stats .st-comment{
+        background-color: #00ffdd;
+      }
+.home-stats .stat span{
+display: block;
+font-size: 50px;
+}
+.latest{
+  margin-top: 16px;
+}
+.latest-user{
+  margin-bottom: 0;
+}
+.latest-user li{
+  padding: 10px;
+overflow: hidden;
+}
+.latest-user li:nth-child(odd){
+  background-color: #EEE;
+}
+.latest-user .btn-success,
+ .btn-info{
+  padding: 2px 8px;
+}
+.latest-user .btn-info{
+  margin-right: 6px;
+}
+/* End Home page*/
 /*End Bootstrap Edits*/
 /* start members page*/
   h1{
@@ -89,5 +140,8 @@ border-radius: 0;
   .main-table tr:first-child td{
     background-color: #333;
     color: #FFF;
+  }
+  .activate{
+    margin-left: 6px;
   }
 /* end members page*/

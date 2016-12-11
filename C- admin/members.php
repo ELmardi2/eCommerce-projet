@@ -16,8 +16,12 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
   //Start Manage page(commence guestion page)
   if ($do == 'Manage') {//Manage page (gestion page)
 
+    $query = '';
+    if (isset($_GET['page']) && $_GET['page'] == 'Pending') {
+      $query = 'AND RegStatus = 0';
+    }
     //select users except Admins
-    $stmt = $con ->prepare("SELECT * FROM users WHERE GroupID != 1");
+    $stmt = $con ->prepare("SELECT * FROM users WHERE GroupID != 1   $query");
     //execute the stmt
     $stmt->execute();
     //asign all data in variables
@@ -32,7 +36,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
               <td>Username</td>
               <td>Email</td>
               <td>Fullname</td>
-              <td>Registred Date</td>
+              <td>Registered Date</td>
               <td>Control</td>
             </tr>
           <?php foreach ($rows as $row){
@@ -44,8 +48,11 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             echo "<td>" . $row['Date'] . "</td>";
             echo "<td>
             <a href='members.php?do=Edit&userID=" . $row[userID] . "'  class='btn btn-success'><i class='fa fa-edit'></i>Edit</a>
-            <a href='members.php?do=Delete&userID=" . $row[userID] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>
-            </td>";
+            <a href='members.php?do=Delete&userID=" . $row[userID] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>";
+            if ($row['RegStatus'] == 0) {
+          echo "<a href='members.php?do=Activate&userID=" . $row[userID] . "'  class='btn btn-info activate'><i class='fa fa-hand-pointer-o'></i>Activate</a>";
+            }
+            echo  "</td>";
             echo "</tr>";
           }
              ?>
@@ -140,11 +147,14 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
       //check if user exist in the data base
       $check = checkItem('username', 'users', $user);
       if ($check == 1) {
-        echo "<div class='alert alert-danger'>Sorry this user  is already exist</div>";
+        echo "<div class='container'>";
+      $theMsg = "<div class='alert alert-danger'>Sorry this user  is already exist</div>";
+      RedirectHome($theMsg, 'back', 7);
+      echo "</div>";
       }else {
 
-      $stmt = $con->prepare("INSERT INTO users(username, password, Email, fullname,Date)
-VALUES(:zuser, :zpass, :zmail, :zname, now())");
+      $stmt = $con->prepare("INSERT INTO users(username, password, Email, fullname, RegStatus, Date)
+VALUES(:zuser, :zpass, :zmail, :zname, 1, now())");
         $stmt->execute(array(
           'zuser'  =>$user,
           'zpass'  =>$hashpass,
@@ -187,7 +197,7 @@ VALUES(:zuser, :zpass, :zmail, :zname, now())");
 
 
     //check if there is such ID show the form
-    if ($stmt->rowCount() > 0) { ?>
+    if ($count > 0) { ?>
 
               <h1 class="text-center"> Edit Members</h1>
               <div class="container">
@@ -308,17 +318,10 @@ echo  '<div class="container">';
 
 
           //SELECT user depend on userID
-          //check if user exist
-          $stmt = $con->prepare("SELECT * FROM users WHERE userID = ? LIMIT 1");
-
-          //execute query
-          $stmt->execute(array($userID));
-
-          //check changes in row count
-          $count = $stmt->rowCount();
+          $check = checkItem('userID', 'users', $userID);
 
           //check if there is such ID show the form
-          if ($stmt->rowCount() > 0) {
+          if ($check > 0) {
 
           $stmt = $con->prepare("DELETE FROM users WHERE userID = :zuser");
 
@@ -331,9 +334,34 @@ echo  '<div class="container">';
             $theMsg =  "<div class='alert alert-danger'> Non! cet ID n'est pas exist</div>";
                 RedirectHome($theMsg);
           }
-          }
-          echo "</div>";
+            echo "</div>";
+        }elseif ($do = 'Activat') {
+          //echo "Bienvenue à l'Activate page";
 
+          //Activate page
+        echo  '<h1 class="text-center"> Activate Pending</h1>';
+        echo  '<div class="container">';
+                  //echo "Welcome to Delete page";
+
+                  $userID = isset($_GET['userID']) && is_numeric($_GET['userID']) ? intval($_GET['userID']) : 0;
+
+
+                  //SELECT user depend on userID
+                  $check = checkItem('userID', 'users', $userID);
+
+                  //check if there is such ID show the form
+                  if ($check > 0) {
+
+                  $stmt = $con->prepare("UPDATE users SET RegStatus = 1 WHERE userID = ?");
+
+                  $stmt->execute(array($userID));
+                  $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Activated</div>';
+                  RedirectHome($theMsg);
+        }else {
+          $theMsg = "<div class='alert alert-danger'>sorry you cannot browse this page directly</div>";
+            RedirectHome($theMsg);
+        }
+}
    include $tpl . "footer.php";
 }else {
 

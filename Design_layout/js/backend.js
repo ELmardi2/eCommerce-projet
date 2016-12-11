@@ -24,6 +24,8 @@ $(function() {
   });
   //confirmation Delete
   $('.confirm').click(function () {
-    return confirm('Are You sure!?'); 
+    return confirm('Are You sure!?');
   });
+
+
 });
