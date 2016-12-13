@@ -1,6 +1,7 @@
 <?php
-  session_start();
 
+ob_start();
+  session_start();
   //print_r($_SESSION);
 if (isset($_SESSION['username'])) {
   $pageTitle = 'Home';
@@ -99,3 +100,4 @@ $stmtB->execute();
 
   exit();
 }
+ob_end_flush();

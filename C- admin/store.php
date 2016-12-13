@@ -1,61 +1,111 @@
 <?php
- session_start();
- $nonavbar = '';
-if (isset($_SESSION['username'])) {
-    header('location: home.php');  //:redirect to home page
-}
-
-include 'init.php';
-include $tpl. "header.php";
-include 'include/languages/en.php';
-
-//for control login allow only post method
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $username = $_POST['user'];
-    $password = $_POST['pass'];
-    $hashedpass = sha1($password);
-   //echo $username . '  ' . $password;
-  //echo $hashedpass;
-  $stmt = $con->prepare("SELECT username, password FROM users WHERE username = ? AND password = ? AND GroupID = 1");
-  $stmt->execute(array($username, $hashedpass));
-  $count = $stmt->rowCount();
-  //echo $count;
-  //check count if > 0  that mean the user is admin or have an special record in the data base
-  if ($count > 0) {
-    $_SESSION['username'] = $username; //register session name
-    header('location:home.php');  //:redirect to home page
-     exit();
-    //echo "Bienvenue" . $username;
-    //$_SESSION['user'] =  $username;
-
-
-  }
-
-}
- ?>
-
-
- <form class="login" action="<?php echo $_SERVER['PHP_SELF']?>" method="POST">
-   <h3 class="text-center">Admin login</h3>
-   <input class="form-control" type="text" name="user" placeholder="username" autocomplete="off">
-   <input class="form-control" type="password" name="pass" placeholder="password" autocomplete="new-password">
-   <input class="btn btn-primary btn-block" type="submit" value="login">
- </form>
- <?php
- include $tpl . "footer.php";
-  ?>
-  <?php
+  /*
+  ==Manage members page gere (gere les members)
+  == You can Add[Edit] Delete Members from here(vous pouvez ajouter[modéfier] Effacer les Members d'ici)
+  */
+  ob_start();
   session_start();
+  $pageTitle = '';
+  //$nonavbar = '';
+  //print_r($_SESSION);
+if (isset($_SESSION['username'])) {
 
-  if(isset($_SESSION['username'])){
+  include ('init.php');
 
-    echo "Bienvenue" . $_SESSION['username'];
 
-  }else {
-  //  echo "You are not authorised to view this page directly";
 
-      header('location: index.php');  //:redirect to index  page
+  //Start Manage page(commence guestion page)
+  if ($do == 'Manage') {//Manage page (gestion page)
 
-      exit();
-  }
-   ?>
+ }elseif($do == 'Add') {
+
+}elseif ($do == 'insert') {
+
+}elseif ($do == 'Edit') {
+
+}elseif ($do == 'Update') {
+
+}elseif ($do == 'Delete') {
+
+        }elseif ($do = 'Activat') {
+
+}
+   include $tpl . "footer.php";
+}else {
+
+  header('location: index.php');
+
+  exit();
+}
+
+ob_end_flush();
+
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+echo "<h1 class='text-center'> Insert Category</h1>";
+echo "<div class='container'>";
+  //Get variables from form
+  $name    = $_POST['name'];
+  $desc    = $_POST['description'];
+  $order   = $_POST['ordering'];
+  $visible = $_POST['visibility'];
+  $comm    = $_POST['comment'];
+  $advs    = $_POST['ads'];
+
+    //check if Category exist in the data base
+    $check = checkItem('name', 'Categories', $name);
+    if ($check == 1) {
+      echo "<div class='container'>";
+    $theMsg = "<div class='alert alert-danger'>Sorry this category  is already exist</div>";
+    RedirectHome($theMsg, 'back', 7);
+    echo "</div>";
+    }else {
+
+    $stmt = $con->prepare("INSERT INTO Categories(name, description, ordering, visibility, allow_comment, allow_adv)
+       VALUES(:zname, :zdescription, :zordering, :zcomment, :zads)");
+      $stmt->execute(array(
+        'zname'          =>$name,
+        'zdescription'   =>$desc,
+        'zordering'      =>$order,
+        'zvisibility'    =>$visible,
+        'zcomment'       =>$comm,
+        'zads'           =>$advs
+      ));
+      //echo success message
+      echo "<div class='container'>";
+      $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . " record Inserted</div>";
+          RedirectHome($theMsg, 'back');
+          echo "</div>";
+
+
+}
+}
+else {
+  echo "<div class='container'>";
+$theMsg = "<div class='alert alert-danger'>sorry you cannot browse this page directly</div>";
+RedirectHome($theMsg, 'back', 7);
+echo "</div>";
+}
+echo "</div>"
+$stmt = $con->prepare("SELECT * FROM categories");
+$stmt-<execute();
+$cats = $stmt->fetchAll();
+?>
+<h1 class="text-center">Manage Categories</h1>
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading"> Manage Categories</div>
+      <div class="panel-body">
+        <?php
+        foreach ($cats as $cat) {
+          echo $cat['name'] . "<br>";
+        }
+         ?>
+      </div>
+  </div>
+</div>
+<?php
+
+ ?>

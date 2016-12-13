@@ -113,7 +113,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
 
   if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-  echo "<h1 class='text-center'> Update Members</h1>";
+  echo "<h1 class='text-center'> insert Members</h1>";
   echo "<div class='container'>";
     //Get variables from form
     $user  = $_POST['username'];
