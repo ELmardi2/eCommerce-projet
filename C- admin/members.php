@@ -173,7 +173,7 @@ VALUES(:zuser, :zpass, :zmail, :zname, 1, now())");
   }else {
     echo "<div class='container'>";
   $theMsg = "<div class='alert alert-danger'>sorry you cannot browse this page directly</div>";
-  RedirectHome($theMsg, 'back', 7);
+  RedirectHome($theMsg);
   echo "</div>";
   }
 }elseif ($do == 'Edit') {  //Edit page (modéfie page)

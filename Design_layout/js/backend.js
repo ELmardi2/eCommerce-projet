@@ -4,7 +4,9 @@ $(function() {
 
 
 //Trigger SelectBoxIT
-$("select").selectBoxIt();
+$("select").selectBoxIt({
+  autoWidth: false
+});
 
   //Hide placeholder on form focus
   $('[placeholder]').focus(function () {

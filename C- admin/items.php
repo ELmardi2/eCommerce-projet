@@ -32,7 +32,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             <input type="text"
             name="name"
              class="form-control"
-             required="required"
+              required="required"
              placeholder="Name of the item">
           </div>
         </div>
@@ -44,7 +44,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             <input type="text"
             name="description"
              class="form-control"
-            required="required"
+             required="required"
             placeholder="Description of the item">
           </div>
         </div>
@@ -56,7 +56,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             <input type="text"
             name="price"
              class="form-control"
-            required="required"
+              required="required"
             placeholder="Price of the item">
           </div>
         </div>
@@ -68,7 +68,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             <input type="text"
             name="country"
              class="form-control"
-            required="required"
+              required="required"
             placeholder="Country which made the Item">
           </div>
         </div>
@@ -88,21 +88,6 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
           </div>
         </div>
         <!--End Status field-->
-        <!--Start Status field-->
-        <div class="form-group form-group-lg">
-          <label class="col-sm-2 control-lebel">Rating</label>
-          <div class="col-sm-10 col-md-4">
-            <select name="rating">
-              <option value="0">....</option>
-              <option value="1">*</option>
-              <option value="2">**</option>
-              <option value="3">***</option>
-              <option value="4">****</option>
-              <option value="5">*****</option>
-            </select>
-          </div>
-        </div>
-        <!--End SRating field-->
         <!--Start buttom field-->
         <div class="form-group form-group-lg">
           <div class="col-sm-offset-2 col-sm-10">
@@ -118,7 +103,69 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
 
 }elseif ($do == 'insert') {
 
-}elseif ($do == 'Edit') {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    echo "<h1 class='text-center'> insert Item</h1>";
+    echo "<div class='container'>";
+      //Get variables from form
+      //Get variables from form
+      $name     = $_POST['name'];
+      $desc     = $_POST['description'];
+      $price    = $_POST['price'];
+      $country  = $_POST['country'];
+      $status   = $_POST['status'];
+
+      //check validate form before
+      $formerrors = array();
+      if (empty($name)) {
+        $formerrors[] = "Name can't be <strong>empty</strong>";
+      }
+      if (empty($desc)) {
+        $formerrors[] = "Description can't be <strong>empty</strong>";
+      }
+      if (empty($price)) {
+        $formerrors[] = "Price can't be <strong>empty</strong>";
+      }
+      if (empty($country)) {
+        $formerrors[] = "Country can't be <strong>empty</strong>";
+      }
+      if ($status == 0){
+        $formerrors[] = "Status can't be <strong>empty</strong>";
+      }
+      foreach ($formerrors as $error) {
+        echo "<div class='alert alert-danger'>" . $error . "</div>";
+      }
+      //chech if there is no errors proced the data base
+      if (empty($error)) {
+         //Insert thes info to data base
+            $stmtA = $con->prepare("INSERT INTO
+              items(name, description, price, country_made,
+              status, add_Date)
+             VALUES(:zname, :zdescription, :zprice, :zcountry, :zstatus, now())");
+              $stmtA->execute(array(
+                'zname'          =>$name,
+                'zdescription'   =>$desc,
+                'zprice'      =>$price,
+                'zcountry'    =>$country,
+                'zstatus'       =>$status
+              ));
+              $count = $stmtA->rowCount();
+            //echo success message
+            echo "<div class='container'>";
+            $theMsg = "<div class='alert alert-success'>" . $count . " record Inserted</div>";
+                RedirectHome($theMsg);
+                echo "</div>";
+      }
+
+    }else {
+      echo "<div class='container'>";
+    $theMsg = "<div class='alert alert-danger'>Sorry you cannot browse this page directly</div>";
+    RedirectHome($theMsg);
+    echo "</div>";
+
+    }
+
+  }elseif ($do == 'Edit') {
 
 }elseif ($do == 'Update') {
 

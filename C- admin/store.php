@@ -107,5 +107,86 @@ $cats = $stmt->fetchAll();
   </div>
 </div>
 <?php
+echo "<h1 class='text-center'> insert Items</h1>";
+echo "<div class='container'>";
 
+  //Get variables from form
+  $name  = $_POST['name'];
+  $desc  = $_POST['description'];
+  $price = $_POST['price'];
+  $country  = $_POST['country'];
+  $status  = $_POST['status'];
+
+  //check validate form before
+  $formerrors = array();
+  if (empty($name)) {
+    $formerrors[] = "Name can't be <strong>empty</strong>";
+  }
+  if (empty($desc)) {
+    $formerrors[] = "Description can't be <strong>empty</strong>";
+  }
+  if (empty($price)) {
+    $formerrors[] = "Price can't be <strong>empty</strong>";
+  }
+  if (empty($country)) {
+    $formerrors[] = "Country can't be <strong>empty</strong>";
+  }
+  if ($status == 0){
+    $formerrors[] = "Status can't be <strong>empty</strong>";
+  }
+foreach ($formerrors as $error) {
+  echo "<div class='alert alert-danger'>" . $error . "</div>";
+}
  ?>
+ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+ echo "<h1 class='text-center'> insert Item</h1>";
+ echo "<div class='container'>";
+   //Get variables from form
+
+
+   //check validate form before
+   $formerrors = array();
+   if (empty($name)) {
+     $formerrors[] = "Name can't be <strong>empty</strong>";
+   }
+   if (empty($desc)) {
+     $formerrors[] = "Description can't be <strong>empty</strong>";
+   }
+   if (empty($price)) {
+     $formerrors[] = "Price can't be <strong>empty</strong>";
+   }
+   if (empty($country)) {
+     $formerrors[] = "Country can't be <strong>empty</strong>";
+   }
+   if ($status == 0){
+     $formerrors[] = "Status can't be <strong>empty</strong>";
+   }
+   foreach ($formerrors as $error) {
+     echo "<div class='alert alert-danger'>" . $error . "</div>";
+   }
+   //chech if there is no errors proced the data base
+   if (empty($error)) {    //Insert thes info to data base
+     $stmt = $con->prepare("INSERT INTO items(name, description, price, country_made, status, add_Date)
+VALUES(:zname, :zdesc, :zprice, :zcountry, zstatus, now())");
+       $stmt->execute(array(
+         'zname'         =>$name,
+         'zdescription'  =>$desc,
+         'zprice'        =>$price,
+         'zcountry'      =>$country,
+         'zstatus'       =>$status
+       ));
+     //echo success message
+     echo "<div class='container'>";
+     $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . " record Inserted</div>";
+         RedirectHome($theMsg, 'back');
+         echo "</div>";
+ }
+
+ }else {
+   echo "<div class='container'>";
+ $theMsg = "<div class='alert alert-danger'>sorry you cannot browse this page directly</div>";
+ RedirectHome($theMsg, 'back', 7);
+ echo "</div>";
+ }
+}

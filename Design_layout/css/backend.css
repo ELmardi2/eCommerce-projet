@@ -147,7 +147,8 @@ overflow: hidden;
 /* end members page*/
 /*Start category  page*/
 .category .panel-heading{
-  color: #737373;
+  color: #808080;
+  color: #cccccc;
   font-weight: bold;
 }
 .category .panel-body{
