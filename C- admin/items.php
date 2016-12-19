@@ -32,7 +32,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             <input type="text"
             name="name"
              class="form-control"
-              required="required"
+             required="required"
              placeholder="Name of the item">
           </div>
         </div>
@@ -56,7 +56,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             <input type="text"
             name="price"
              class="form-control"
-              required="required"
+             required="required"
             placeholder="Price of the item">
           </div>
         </div>
@@ -68,7 +68,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             <input type="text"
             name="country"
              class="form-control"
-              required="required"
+             required="required"
             placeholder="Country which made the Item">
           </div>
         </div>
@@ -88,6 +88,42 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
           </div>
         </div>
         <!--End Status field-->
+        <!--Start Members field-->
+        <div class="form-group form-group-lg">
+          <label class="col-sm-2 control-lebel">Member</label>
+          <div class="col-sm-10 col-md-4">
+            <select class="form-control" name="member">
+              <option value="0">....</option>
+              <?php
+              $stmtA = $con->prepare("SELECT * FROM users");
+              $stmtA->execute();
+              $users = $stmtA->fetchAll();
+              foreach ($users as $user) {
+                echo "<option value='" . $user['userID'] . "'>" . $user['username'] . "</option>";
+              }
+               ?>
+            </select>
+          </div>
+        </div>
+        <!--End Members field-->
+        <!--Start Categories field-->
+        <div class="form-group form-group-lg">
+          <label class="col-sm-2 control-lebel">Category</label>
+          <div class="col-sm-10 col-md-4">
+            <select class="form-control" name="category">
+              <option value="0">....</option>
+              <?php
+              $stmt = $con->prepare("SELECT * FROM categories");
+              $stmt->execute();
+              $cats = $stmt->fetchAll();
+              foreach ($cats as $cat) {
+                echo "<option value='" . $cat['ID'] . "'>" . $cat['name'] . "</option>";
+              }
+               ?>
+            </select>
+          </div>
+        </div>
+        <!--End Categories field-->
         <!--Start buttom field-->
         <div class="form-group form-group-lg">
           <div class="col-sm-offset-2 col-sm-10">
@@ -114,6 +150,8 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
       $price    = $_POST['price'];
       $country  = $_POST['country'];
       $status   = $_POST['status'];
+      $member   = $_POST['member'];
+      $cat   = $_POST['category'];
 
       //check validate form before
       $formerrors = array();
@@ -132,29 +170,34 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
       if ($status == 0){
         $formerrors[] = "Status can't be <strong>empty</strong>";
       }
+      if ($member == 0){
+        $formerrors[] = "You must choose member can't be <strong>empty</strong>";
+      }
+      if ($cat == 0){
+        $formerrors[] = "You must choose category can't be <strong>empty</strong>";
+      }
       foreach ($formerrors as $error) {
         echo "<div class='alert alert-danger'>" . $error . "</div>";
       }
       //chech if there is no errors proced the data base
       if (empty($error)) {
-         //Insert thes info to data base
-            $stmtA = $con->prepare("INSERT INTO
-              items(name, description, price, country_made,
-              status, add_Date)
-             VALUES(:zname, :zdescription, :zprice, :zcountry, :zstatus, now())");
-              $stmtA->execute(array(
-                'zname'          =>$name,
-                'zdescription'   =>$desc,
-                'zprice'      =>$price,
-                'zcountry'    =>$country,
-                'zstatus'       =>$status
-              ));
-              $count = $stmtA->rowCount();
-            //echo success message
-            echo "<div class='container'>";
-            $theMsg = "<div class='alert alert-success'>" . $count . " record Inserted</div>";
-                RedirectHome($theMsg);
-                echo "</div>";
+        $stmt = $con->prepare("INSERT INTO items(name, description, price,
+           country_made, status, add_Date, cat_ID, user_ID)
+  VALUES(:zname, :zdesc, :zprice, :zcountry, :zstatus, now(), :zcat, :zmember)");
+          $stmt->execute(array(
+            'zname'  =>$name,
+            'zdesc'  =>$desc,
+            'zprice'  =>$price,
+            'zcountry'  =>$country,
+            'zstatus'  =>$status,
+            'zmember'  =>$member,
+            'zcat'  =>$cat
+          ));
+        //echo success message
+        echo "<div class='container'>";
+        $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . " record Inserted</div>";
+            RedirectHome($theMsg, 'back');
+            echo "</div>";
       }
 
     }else {
