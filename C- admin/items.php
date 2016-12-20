@@ -284,6 +284,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
                  <h1 class="text-center"> Edit Items</h1>
                  <div class="container">
                    <form class="form-horizontal" action="?do=Update" method="POST">
+                     <input type="hidden" name="itemID" value="<?php echo $itemID ?>">
                      <!--Start uname field-->
                      <div class="form-group form-group-lg">
                        <label class="col-sm-2 control-lebel">Name</label>
@@ -356,7 +357,6 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
                        <label class="col-sm-2 control-lebel">Member</label>
                        <div class="col-sm-10 col-md-4">
                          <select class="form-control" name="member">
-                           <option value="0">....</option>
                            <?php
                            $stmtA = $con->prepare("SELECT * FROM users");
                            $stmtA->execute();
@@ -376,7 +376,6 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
                        <label class="col-sm-2 control-lebel">Category</label>
                        <div class="col-sm-10 col-md-4">
                          <select class="form-control" name="category">
-                           <option value="0">....</option>
                            <?php
                            $stmt = $con->prepare("SELECT * FROM categories");
                            $stmt->execute();
@@ -410,9 +409,100 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
          echo "</div>";
    }
 }elseif ($do == 'Update') {
+  //Update page
+  echo "<h1 class='text-center'> Update Items</h1>";
+  echo "<div class='container'>";
+  if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    //Get variables from form
+    $id   = $_POST['itemID'];
+    $name     = $_POST['name'];
+    $desc     = $_POST['description'];
+    $price    = $_POST['price'];
+    $country  = $_POST['country'];
+    $status   = $_POST['status'];
+    $cat   = $_POST['category'];
+    $member   = $_POST['member'];
+
+    //check validate form before
+    $formerrors = array();
+    if (empty($name)) {
+      $formerrors[] = "Name can't be <strong>empty</strong>";
+    }
+    if (empty($desc)) {
+      $formerrors[] = "Description can't be <strong>empty</strong>";
+    }
+    if (empty($price)) {
+      $formerrors[] = "Price can't be <strong>empty</strong>";
+    }
+    if (empty($country)) {
+      $formerrors[] = "Country can't be <strong>empty</strong>";
+    }
+    if ($status == 0){
+      $formerrors[] = "Status can't be <strong>empty</strong>";
+    }
+    if ($member == 0){
+      $formerrors[] = "You must choose member can't be <strong>empty</strong>";
+    }
+    if ($cat == 0){
+      $formerrors[] = "You must choose category can't be <strong>empty</strong>";
+    }
+    foreach ($formerrors as $error) {
+      echo "<div class='alert alert-danger'>" . $error . "</div>";
+    }
+    //chech if there is no errors proced the data base
+    if (empty($error)) {
+      //Update the data base with these formation
+      $stmt = $con->prepare("UPDATE
+                                 items
+                             SET name = ?,
+                                 description = ?,
+                                 price = ?,
+                                 country_made = ?,
+                                 status = ?,
+                                 cat_ID = ?,
+                                 user_ID = ?
+                            WHERE item_ID =?");
+      $stmt->execute(array($name, $desc, $price, $country, $status, $cat, $member, $id));
+        $stmt->rowCount();
+
+      //echo success message
+    $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Updated</div>';
+        RedirectHome($theMsg, 'back');
+    }
+
+  }else {
+    $theMsg = "<div class='alert alert-danger'>sorry you cannot browse this page directly</div>";
+      RedirectHome($theMsg);
+  }
+  echo "</div>";
 }elseif ($do == 'Delete') {
+  //Delete page
+echo  '<h1 class="text-center"> Delete Item</h1>';
+echo  '<div class="container">';
+          //echo "Welcome to Delete page";
 
+          $itemID = isset($_GET['item_ID']) && is_numeric($_GET['item_ID']) ? intval($_GET['item_ID']) : 0;
+
+
+          //SELECT user depend on userID
+          $check = checkItem('item_ID', 'items', $itemID);
+
+          //check if there is such ID show the form
+          if ($check > 0) {
+
+          $stmt = $con->prepare("DELETE FROM items WHERE item_ID = :zname");
+
+          $stmt->bindParam(':zname', $itemID);
+
+          $stmt->execute();
+          $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Deleted</div>';
+          RedirectHome($theMsg);
+          }else {
+            $theMsg =  "<div class='alert alert-danger'> Non! cet ID n'est pas exist</div>";
+                RedirectHome($theMsg);
+          }
+            echo "</div>";
 }elseif ($do = 'Approve') {
 
 }
