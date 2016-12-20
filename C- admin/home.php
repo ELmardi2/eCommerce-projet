@@ -36,7 +36,7 @@ $stmtB->execute();
       <div class="col-md-3">
         <div class="stat st-items">
           Total Items
-          <span>1234</span>
+          <span><a href="items.php"><?php echo countItem('item_ID', 'items') ?></a></span>
         </div>
       </div>
       <div class="col-md-3">
