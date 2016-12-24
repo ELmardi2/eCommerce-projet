@@ -60,8 +60,9 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             echo "<td>
             <a href='items.php?do=Edit&item_ID=" . $item[item_ID] . "'  class='btn btn-success'><i class='fa fa-edit'></i>Edit</a>
             <a href='items.php?do=Delete&item_ID=" . $item[item_ID] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>";
-            if ($item['RegStatus'] == 0) {
-          echo "<a href='items.php?do=Activate&item_ID=" . $item[item_ID] . "'  class='btn btn-info activate'><i class='fa fa-hand-pointer-o'></i>Activate</a>";
+            if ($item['Approve'] == 0) {
+          echo "<a href='items.php?do=Approve&item_ID=" . $item[item_ID] . "'  class='btn btn-info activate'>
+          <i class='fa fa-check'></i>Approve</a>";
             }
             echo  "</td>";
             echo "</tr>";
@@ -504,7 +505,29 @@ echo  '<div class="container">';
           }
             echo "</div>";
 }elseif ($do = 'Approve') {
+  //Activate page
+echo  '<h1 class="text-center"> Approve Item</h1>';
+echo  '<div class="container">';
+          //echo "Welcome to Delete page";
 
+          $itemID = isset($_GET['item_ID']) && is_numeric($_GET['item_ID']) ? intval($_GET['item_ID']) : 0;
+
+
+          //SELECT user depend on userID
+          $check = checkItem('item_ID', 'items', $itemID);
+
+          //check if there is such ID show the form
+          if ($check > 0) {
+
+          $stmt = $con->prepare("UPDATE items SET Approve = 1 WHERE item_ID = ?");
+
+          $stmt->execute(array($itemID));
+          $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Approved</div>';
+          RedirectHome($theMsg, 'back');
+}else {
+  $theMsg = "<div class='alert alert-danger'>sorry you cannot browse this page directly</div>";
+    RedirectHome($theMsg);
+}
 }
    include $tpl . "footer.php";
 }else {

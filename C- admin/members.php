@@ -50,7 +50,8 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             <a href='members.php?do=Edit&userID=" . $row[userID] . "'  class='btn btn-success'><i class='fa fa-edit'></i>Edit</a>
             <a href='members.php?do=Delete&userID=" . $row[userID] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>";
             if ($row['RegStatus'] == 0) {
-          echo "<a href='members.php?do=Activate&userID=" . $row[userID] . "'  class='btn btn-info activate'><i class='fa fa-hand-pointer-o'></i>Activate</a>";
+          echo "<a href='members.php?do=Activate&userID=" . $row[userID] . "'
+          class='btn btn-info activate'><i class='fa fa-hand-pointer-o'></i>Activate</a>";
             }
             echo  "</td>";
             echo "</tr>";

@@ -67,6 +67,17 @@ border-radius: 12px;
   padding: 20px;
   font-size: 15px;
   color: #FFF;
+  position: relative;
+  overflow: hidden;
+}
+.home-stats .stat i{
+  font-size: 70px;
+  position: absolute;
+  top: 35px;
+  left: 26px;
+}
+.home-stats .stat .info{
+float: right;
 }
 .home-stats .stat a{
   color: #FFF;
@@ -92,6 +103,14 @@ font-size: 50px;
 }
 .latest{
   margin-top: 16px;
+  toggle-info
+}
+.latest .toggle-info{
+color: #999;
+cursor: pointer;
+}
+.latest .toggle-info:hover{
+color: #666;
 }
 .latest-user{
   margin-bottom: 0;
