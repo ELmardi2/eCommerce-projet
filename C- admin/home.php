@@ -56,7 +56,7 @@ $stmtB->execute();
         <i class="fa fa-comment"></i>
             <div class="info">
               Total Comments
-              <span>0</span>
+              <span><a href="comments.php"><?php echo countItem('C_ID', 'comments') ?></span>
             </div>
         </div>
       </div>
@@ -77,6 +77,7 @@ $stmtB->execute();
           <div class="panel-body">
                <ul class='list-unstyled latest-user'>
                 <?php
+                if (! empty($latestUser)) {
                   foreach ($latestUser as $user) {
                       echo   "<li>";
                             echo   $user['username'];
@@ -84,12 +85,15 @@ $stmtB->execute();
                                        echo "<span class='btn btn-success pull-right'>";
                                echo "<i class='fa fa-edit'></i> Edit";
                                if ($user['RegStatus'] == 0) {
-                             echo "<a href='members.php?do=Activate&userID=" . $user[userID] . "'
+                             echo "<a href='members.php?do=Activate&userID=" . $user['userID'] . "'
                               class='btn btn-info pull-right activate'><i class='fa fa-hand-pointer-o'></i>Activate</a>";
                                }
                            echo "</span>";
                         echo "</a>";
                       echo "</li>";
+                     }
+                     }else{
+                       echo "There is No User To Show";
                      }
                  ?>
            </ul>
@@ -107,6 +111,7 @@ $stmtB->execute();
           <div class="panel-body">
             <ul class='list-unstyled latest-user'>
              <?php
+             if (! empty($latestItems)) {
                foreach ($latestItems as $item) {
                    echo   "<li>";
                          echo   $item['name'];
@@ -121,12 +126,54 @@ $stmtB->execute();
                      echo "</a>";
                    echo "</li>";
                   }
+                }else {
+                  echo "There is No Items To Show";
+                }
               ?>
         </ul>
           </div>
         </div>
       </div>
     </div>
+      <!--Start row Comments-->
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="panel panel-default">
+          <div class="panel panel-heading">
+            <i class="fa fa-comments-o"></i>Latest  comments
+            <span class=" toggle-info pull-right">
+              <i class="fa fa-plus fa-lg"></i>
+            </span>
+          </div>
+          <div class="panel-body">
+            <?php
+            $stmt = $con ->prepare("SELECT comments.*,users.username AS member
+                                    FROM
+                                        comments
+                                    INNER JOIN
+                                        users
+                                    ON
+                                    users.userID = comments.user_ID ");
+            //execute the stmt
+            $stmt->execute();
+            //asign all data in variables
+            $comments = $stmt->fetchAll();
+            if (! empty($comments)) {
+                foreach ($comments as $comment) {
+                  echo "<div class='comment-box'>";
+                  echo '<span class="member-n"><a href="member.php?do=Add&userID="></a>' . $comment['member'] . "</span>";
+                  echo '<p class="member-c">' . $comment['comment'] . "</p>";
+                  echo "</div>";
+                }
+            }else {
+              echo "There is No Comments To Show";
+            }
+             ?>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--End row Comments-->
   </div>
 </div>
 <?php

@@ -33,6 +33,7 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
     $stmt->execute();
     //asign all data in variables
     $items = $stmt->fetchAll();
+    if(! empty($items)){
     ?>
       <h1 class="text-center"> Manage Items</h1>
       <div class="container">
@@ -72,6 +73,13 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
         </div>
         <a href='items.php?do=Add' class="btn btn-primary"><i class="fa fa-plus"></i>Add new Item</a>
       </div>
+      <?php
+      }else{
+        echo "<div class='container'>";
+        echo "<div class='alert alert-info nice-msg'>There is No Items To Show </div>";
+        echo "<a href='items.php?do=Add' class='tn btn-primary'><i class='fa fa-plus'></i>Add new Item</a>";
+          echo "</div>";
+      } ?>
       <?php
 }elseif($do == 'Add') { ?>
     <h1 class="text-center"> Add new Items</h1>
@@ -399,6 +407,52 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
                      </div>
                      <!--End buttom field-->
                    </form>
+                   <?php
+                   //select users except Admins
+                   $stmt = $con ->prepare("SELECT comments.*,users.username AS member
+                                           FROM
+                                               comments
+                                           INNER JOIN
+                                               users
+                                           ON
+                                           users.userID = comments.user_ID
+                                           WHERE item_ID = ?");
+                   //execute the stmt
+                   $stmt->execute(array($itemID));
+                   //asign all data in variables
+                   $rows = $stmt->fetchAll();
+                   if (! empty($rows)) {
+                   ?>
+                     <h1 class="text-center"> Manage [<?php echo $item['name'] ?>] Comments</h1>
+                       <div class="table-responsive">
+                         <table class="main-table text-center table table-bordered">
+                           <tr>
+                             <td>Comment</td>
+                             <td>User name</td>
+                             <td>Add Date</td>
+                             <td>Control</td>
+                           </tr>
+                         <?php foreach ($rows as $row){
+                           echo "<tr>";
+                           echo "<td>" . $row['comment'] . "</td>";
+                           echo "<td>" . $row['member'] . "</td>";
+                           echo "<td>" . $row['comment_Date'] . "</td>";
+                           echo "<td>
+                           <a href='comments.php?do=Edit&commID=" . $row['C_ID'] . "'  class='btn btn-success'><i class='fa fa-edit'></i>Edit</a>
+                           <a href='comments.php?do=Delete&commID=" . $row['C_ID'] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>";
+                           if ($row['status'] == 0) {
+                         echo "<a href='comments.php?do=Approve&commID=" . $row['C_ID'] . "'
+                         class='btn btn-info activate'><i class='fa fa-check'></i>Approve</a>";
+                           }
+                           echo  "</td>";
+                           echo "</tr>";
+                         }
+                            ?>
+                         </table>
+                       </div>
+                       <?php
+
+                     }  ?>
                  </div>
            <?php
    }else {

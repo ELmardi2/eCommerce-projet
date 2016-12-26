@@ -30,7 +30,8 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
     //execute the stmt
     $stmt->execute();
     //asign all data in variables
-    $rows = $stmt->fetchAll();
+    $comments = $stmt->fetchAll();
+    if(! empty($comments)){
     ?>
       <h1 class="text-center"> Manage Comments</h1>
       <div class="container">
@@ -44,18 +45,18 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
               <td>Add Date</td>
               <td>Control</td>
             </tr>
-          <?php foreach ($rows as $row){
+          <?php foreach ($comments as $comment){
             echo "<tr>";
-            echo "<td>" . $row['C_ID'] . "</td>";
-            echo "<td>" . $row['comment'] . "</td>";
-            echo "<td>" . $row['item_name'] . "</td>";
-            echo "<td>" . $row['member'] . "</td>";
-            echo "<td>" . $row['comment_Date'] . "</td>";
+            echo "<td>" . $comment['C_ID'] . "</td>";
+            echo "<td>" . $comment['comment'] . "</td>";
+            echo "<td>" . $comment['item_name'] . "</td>";
+            echo "<td>" . $comment['member'] . "</td>";
+            echo "<td>" . $comment['comment_Date'] . "</td>";
             echo "<td>
-            <a href='comments.php?do=Edit&commID=" . $row['C_ID'] . "'  class='btn btn-success'><i class='fa fa-edit'></i>Edit</a>
-            <a href='comments.php?do=Delete&commID=" . $row['C_ID'] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>";
-            if ($row['status'] == 0) {
-          echo "<a href='comments.php?do=Approve&commID=" . $row['C_ID'] . "'
+            <a href='comments.php?do=Edit&commID=" . $comment['C_ID'] . "'  class='btn btn-success'><i class='fa fa-edit'></i>Edit</a>
+            <a href='comments.php?do=Delete&commID=" . $comment['C_ID'] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>";
+            if ($comment['status'] == 0) {
+          echo "<a href='comments.php?do=Approve&commID=" . $comment['C_ID'] . "'
           class='btn btn-info activate'><i class='fa fa-check'></i>Approve</a>";
             }
             echo  "</td>";
@@ -65,6 +66,12 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
           </table>
         </div>
       </div>
+      <?php }else{
+        echo "<div class='container'>";
+          echo "<div class='alert alert-info nice-msg'>There Is No members To Show</div>";
+          echo "</div>";
+      } ?>
+
   <?php }elseif ($do == 'Edit') {        //Edit page (modéfie page)
 
     $commID = isset($_GET['commID']) && is_numeric($_GET['commID']) ? intval($_GET['commID']) : 0;

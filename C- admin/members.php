@@ -26,6 +26,8 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
     $stmt->execute();
     //asign all data in variables
     $rows = $stmt->fetchAll();
+    if (! empty($rows)) {
+
     ?>
       <h1 class="text-center"> Manage Members</h1>
       <div class="container">
@@ -47,21 +49,29 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
             echo "<td>" . $row['fullname'] . "</td>";
             echo "<td>" . $row['Date'] . "</td>";
             echo "<td>
-            <a href='members.php?do=Edit&userID=" . $row[userID] . "'  class='btn btn-success'><i class='fa fa-edit'></i>Edit</a>
-            <a href='members.php?do=Delete&userID=" . $row[userID] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>";
+            <a href='members.php?do=Edit&userID=" . $row['userID'] . "'  class='btn btn-success'><i class='fa fa-edit'></i>Edit</a>
+            <a href='members.php?do=Delete&userID=" . $row['userID'] . "'  class='btn btn-danger confirm'><i class='fa fa-close'></i>Delete</a>";
             if ($row['RegStatus'] == 0) {
-          echo "<a href='members.php?do=Activate&userID=" . $row[userID] . "'
+          echo "<a href='members.php?do=Activate&userID=" . $row['userID'] . "'
           class='btn btn-info activate'><i class='fa fa-hand-pointer-o'></i>Activate</a>";
             }
             echo  "</td>";
             echo "</tr>";
           }
-             ?>
+            ?>
           </table>
         </div>
         <a href='members.php?do=Add' class="btn btn-primary"><i class="fa fa-plus"></i>Add new Member</a>
       </div>
-  <?php }elseif($do == 'Add') {
+
+      <?php }else{
+        echo "<div class='container'>";
+          echo "<div class='alert alert-info nice-msg'>There Is No members To Show</div>";
+        echo "<a href='members.php?do=Add' class='tn btn-primary'><i class='fa fa-plus'></i>Add new Member</a>";
+        echo "</div>";
+      }
+
+     }elseif($do == 'Add') {
     ?>
       <h1 class="text-center"> Add new Member</h1>
       <div class="container">
@@ -295,7 +305,7 @@ VALUES(:zuser, :zpass, :zmail, :zname, 1, now())");
     //chech if there is no errors proced the data base
     if (empty($error)) {
       //Update the data base with these formation
-      $stmt = $con->prepare("UPDATE users SET username = ?, Email = ?, fullname = ? WHERE userID = ?, pass = ?");
+      $stmt = $con->prepare("UPDATE users SET username = ?, Email = ?, fullname = ? WHERE userID = ?, pass = ? ");
       $stmt->execute(array($user, $email, $name, $pass, $id));
         $stmt->rowCount();
 
@@ -329,8 +339,8 @@ echo  '<div class="container">';
           $stmt->bindParam(':zuser', $userID);
 
           $stmt->execute();
-          $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . 'record Deleted</div>';
-          RedirectHome($theMsg);
+          $theMsg = "<div class='alert alert-success'>" . $stmt->rowCount() . 'Member Deleted</div>';
+          RedirectHome($theMsg, 'back');
           }else {
             $theMsg =  "<div class='alert alert-danger'> Non! cet ID n'est pas exist</div>";
                 RedirectHome($theMsg);
