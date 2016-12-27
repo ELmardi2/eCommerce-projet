@@ -26,7 +26,9 @@ $do = isset($_GET['do']) ? $_GET['do'] : 'Manage';
                             INNER JOIN
                                 users
                             ON
-                            users.userID = comments.user_ID ");
+                            users.userID = comments.user_ID
+                            ORDER BY C_ID DESC
+                            ");
     //execute the stmt
     $stmt->execute();
     //asign all data in variables
